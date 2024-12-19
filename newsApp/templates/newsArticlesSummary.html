@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Intelligence Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- Quill.js Styles -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .textarea-container {
+            margin: 10px 0;
+        }
+
+        .editor-container {
+            height: 200px;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
+        .article-container {
+            height: 200px;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
+        .editor-toolbar {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header text-center sticky-top py-2"
+        style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+        <div class="d-flex justify-content-evenly align-items-center mb-1">
+            <a href="/homePage" style="text-decoration: none;">
+                <h1 class="me-3 badge bg-secondary fs-4 px-3 py-2 shadow-sm"
+                    style="font-family: 'Roboto', sans-serif;">
+                    <i class="fas fa-newspaper" style="color: #f08c19;"></i> News Intelligence Tracker
+                </h1>
+            </a>
+        </div>
+    </header>
+    <a href="/newsArticles" class="mx-2 btn btn-dark ">Back</a>
+
+    <div class="container">
+        <div class="row">
+            <div class="textarea-container">
+                <div>
+                    <h4>{{ article.news.newsTitle }} <span>| {{ article.news.newsDate }}</span></h4>
+                </div>
+
+                <label for="articleContent" class="fs-3 text-dark" style="font-weight: 600;">Article</label>
+                <div id="articleContent" class="editor-container">
+                    {{article.newsarticle}}
+                </div>
+
+                <label for="gptSummary" class="fs-3 text-dark" style="font-weight: 600;">GPT Summary</label>
+                <input list="prompt" name="prompt" type="text" style="width: 500px;border-radius: 10px; margin-right:5px;margin-left: 5px;height: 40px;" placeholder="Enter Your Summary Length or prompt">
+                <datalist id="prompt">
+                    <option value="prompt-1">
+                    <option value="prompt-2">
+                    <option value="prompt-3">
+                </datalist>
+                <button type="submit" class="btn btn-dark" style="margin: 4px;" onclick="generateSummary()">Run GPT</button>
+                <div id="gptSummary" class="editor-container">
+                    <!-- Quill.js Editor for GPT summary -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+   
+        <script>
+    // Initialize Quill editor for the GPT Summary (editable)
+    const gptSummaryEditor = new Quill('#gptSummary', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ font: [] }, { size: [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ color: [] }, { background: [] }],
+                [{ script: 'sub' }, { script: 'super' }],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ align: [] }],
+                ['clean']
+            ]
+        }
+    });
+
+    // Initialize Quill editor for the Article content (readonly)
+    const articleEditor = new Quill('#articleContent', {
+        theme: 'snow',
+        readOnly: true, // Make the article editor read-only
+        modules: {
+            toolbar: false // Disable the toolbar for the article editor
+        }
+    });
+
+    // Set the content for both editors (use the appropriate context from Django)
+    articleEditor.root.innerHTML = '{{ article.newsarticle|escapejs }}'; // Set article content (readonly)
+    gptSummaryEditor.root.innerHTML = '{{ article.gptSummary|escapejs }}';  // Set GPT summary content (editable)
+
+    // Function to update content via AJAX
+    async function updateArticleContent() {
+        const gptSummaryContent = gptSummaryEditor.root.innerHTML;  // Get HTML content from GPT summary editor
+
+        try {
+            const response = await fetch('/updateArticleContent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}', // CSRF token for Django
+                },
+                body: JSON.stringify({
+                    articleId: '{{ article.id }}',
+                    content: gptSummaryContent,
+                }),
+            });
+
+            if (response.ok) {
+                console.log('Content saved successfully!');
+            } else {
+                console.error('Failed to save content', response.status);
+            }
+        } catch (error) {
+            console.error('Error saving content:', error);
+        }
+    }
+
+    // Add event listener for Ctrl + S
+    document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault();  // Prevent browser's default save behavior
+            updateArticleContent();  // Save content via AJAX
+        }
+    });
+
+    async function generateSummary() {
+            const articleContent = document.getElementById('articleContent').innerText;  // Get the article content
+
+            try {
+                const response = await fetch('/generateGptSummary', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}', // CSRF token for Django
+                    },
+                    body: JSON.stringify({
+                        articleContent: articleContent
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    // Show the GPT summary
+                    gptSummaryEditor.root.innerHTML = data.summary;
+                } else {
+                    console.error('Error generating summary:', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+</script>
+
+   
+</body>
+
+</html>

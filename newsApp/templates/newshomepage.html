@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Intelligence Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            /* Light background */
+        }
+
+        .header {
+            background-color: #343a40;
+            /* Dark header */
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .nav-link {
+            color: #fff !important;
+        }
+
+        .featured-card {
+            background-color: #ffffff;
+            /* White card */
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .category-title {
+            margin: 10px 0;
+        }
+
+        .news-title a {
+            text-decoration: none;
+
+        }
+
+        .news-title a:hover {
+            text-decoration: underline;
+            color: #007bff !important;
+        }
+
+
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #343a40;
+            color: #f8f9fa;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Custom Styles */
+        .navbar-nav .nav-link {
+            /* position: relative; */
+            transition: color 0.3s ease-in-out;
+            color: #de5313 !important;
+            font-weight: 600 !important;
+
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #0a0a07 !important;
+            background-color: #c1b9ac !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            /* position: absolute; */
+            left: 0;
+            bottom: -5px;
+            width: 0;
+            height: 2px;
+            background-color: #f08c19;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .navbar-nav .nav-link {
+                font-size: 1rem;
+            }
+        }
+
+        /* Set a fixed height and enable scrolling */
+        .scrollable-categories {
+            max-height: 230px;
+            /* Adjust height as needed */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            padding-right: 15px;
+            /* Add some padding to avoid scrollbar overlap */
+        }
+
+        /* Add optional styles to make the scroll look smoother */
+        .scrollable-categories::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-categories::-webkit-scrollbar-thumb {
+            background-color: #d3d3d3;
+            border-radius: 10px;
+        }
+
+        .scrollable-categories::-webkit-scrollbar-thumb:hover {
+            background-color: #a9a9a9;
+        }
+
+        .list-group-item:hover {
+            color: #c57a1a !important;
+            background-color: #c1b9ac !important;
+        }
+
+        .rem {
+            color: blue !important;
+            text-decoration: none;
+        }
+
+        .rem:hover {
+            color: red !important;
+            text-decoration: underline !important;
+        }
+
+        .h1s:hover {
+            color: #f08c19 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header text-center sticky-top py-2"
+        style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+        <!-- Title and Badge -->
+        <div class="d-flex justify-content-evenly  align-items-center mb-1">
+            <a href="/homePage" style="text-decoration: none;">
+                <h1 class="me-3 badge bg-secondary fs-4 px-3 py-2 shadow-sm h1s"
+                    style="font-family: 'Roboto', sans-serif;">
+                    <i class="fas fa-newspaper" style="color: #f08c19;"></i> News Intelligence Tracker [{{data|length}}]
+                </h1>
+            </a>
+            {%if categroy%}
+            <div>
+                <a href="/newsArticles" class="btn btn-outline-primary">Read Articles</a>
+            </div>
+
+            {%endif%}
+            {%if filterData%}
+            <div>
+                <!-- <a href="articles" class="btn btn-outline-primary mx-4">Read Articles</a> -->
+                <a href="sendFile" class="btn btn-success text-white mx-2" style="font-size: 1rem; font-weight: 500;">
+                    Send
+                </a>
+                <a href="deleteAll" class="btn btn-danger text-white" style="font-size: 1rem; font-weight: 500;">
+                    Clear
+                </a>
+            </div>
+            {%endif%}
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <ul class="navbar-nav mx-auto">
+
+                <!-- Filter Options as Links -->
+                {%if keyword%}
+                <li class="nav-item" style="font-size: 10px;">
+                    <a class="nav-link" href="/categroyNews/{{catId}}"
+                        style="color: #343a40; font-size: 0.9rem; font-weight: 500; cursor: pointer;">
+                        All
+
+
+                    </a>
+                </li>
+                {%for i in keyword%}
+                <li class="nav-item" style="font-size: 10px;">
+                    <a class="nav-link" href="/keyWordNews/{{i.id}}"
+                        style="color: #343a40; font-size: 0.9rem; font-weight: 500; cursor: pointer;">
+
+                        {{ i.keyword }}
+
+                    </a>
+                </li>
+                {%endfor%}
+                {%else%}
+                {%for i in categroy%}
+                <li class="nav-item" style="font-size: 10px;">
+                    <a class="nav-link" href="categroyNews/{{i.id}}"
+                        style="color: #343a40; font-size: 0.9rem; font-weight: 500; cursor: pointer;">
+
+                        {{ i.categroy }}
+
+                    </a>
+                </li>
+                {%endfor%}
+                {%endif%}
+
+            </ul>
+            <!-- Send File & Delete All Buttons -->
+
+        </div>
+    </nav>
+
+
+
+    {% if messages %}
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <ul class="list-unstyled mb-0">
+                {% for message in messages %}
+                <li class="mb-2">
+                    <i class="bi bi-check-circle"></i> {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <div class="container my-1">
+        <div class="row">
+            <!-- Fixed Search News and Categories Section -->
+
+            <div class="col-md-8">
+                <!-- Scrollable Featured News Section -->
+                <div class="scrollable-news" style="height: 75vh; overflow-y: scroll; padding-right: 15px;">
+
+                    <h2 class="category-title">Featured News </h2>
+
+
+                    {%if data%}
+                    {% for i in data %}
+                    {%if not i.isScraped%}
+                    <div class="card featured-card mb-1">
+                        <div class="card-body">
+                            <!-- <h3 class="badge bg-secondary" style="color: rgb(236, 231, 231);font-size: 1rem;">{{i.Agency}}</h3> -->
+                            <h3 class="news-title1 badge bg-secondary">
+                                <a href="#" target="_blank"
+                                    style="color: rgb(198, 161, 82);font-size: 1rem;text-decoration: none;">
+                                    {{i.newsAgency}}</a> - {{i.keyWord.keyword}}
+
+                            </h3>
+                            <h5 class="news-title">
+                                <a href="/newsUrlScrap/{{i.id}}" class="text-dark">{{ i.newsTitle }}</a>
+                            </h5>
+                            <div class="d-flex" style="gap: 20px;">
+                                <p class="card-text text-muted">Date: {{ i.newsDate }}</p>
+                                <a href="/remove/{{ i.id }}" class="text-danger rem">Remove News</a>
+                            </div>
+                        </div>
+                    </div>
+                    {%endif%}
+                    {% endfor %}
+
+                    {%else%}
+                    <div class="no-news text-center " style="margin-top: 50px;">
+                        <h3 class="text-danger">No news available at the moment</h3>
+                        <p>It seems there are no updates right now. Please check back later.</p>
+                        <button class="btn btn-primary mt-3" onclick="location.reload()">Refresh</button>
+                    </div>
+                    {%endif%}
+                </div>
+
+            </div>
+            <div class="col-md-4 position-sticky" style="top: 10px;">
+                {%if keyword%}
+                <h2 class="category-title" style="font-size: 1rem;font-weight: 600;">Search News</h2>
+                <form action="/searchNews" method="post" class="d-flex flex-column mb-2">
+                    {% csrf_token %}
+                    <select name="url" class="form-select mb-1" style="font-size: 0.8rem;font-weight: 600;">
+                        <option value="" style="font-size: 0.8rem;font-weight: 600;">Select Your Keyword
+                        </option>
+                        {%for i in keyword %}
+                        <option value="{{i.urlKeyWord}}" style="font-size: 0.8rem;font-weight: 600;">{{i.keyword}}
+                        </option>    
+                        {%endfor%}
+                    </select>
+                       <input type="text" value="{{catId}}" name="catId" hidden >
+                    <select name="time_period" class="form-select mb-1" style="font-size: 0.8rem;font-weight: 600;">
+                        <option value="none" style="font-size: 0.8rem;font-weight: 600;">Select Your News Duration
+                        </option>
+                        <option value="%3A1h" style="font-size: 0.8rem;font-weight: 600;">Past Hours</option>
+                        <option value="%3A1d" style="font-size: 0.8rem;font-weight: 600;">Past 24 Hours</option>
+                        <option value="%3A7d" style="font-size: 0.8rem;font-weight: 600;">Past Week</option>
+
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+
+
+                {%endif%}
+
+
+
+                <h2 class="category-title" style="font-size: 1rem; font-weight: 600;">News Agency - {{ agency|length }}
+                </h2>
+              
+                    {% for i in agency %}
+                    <input type="radio" id="{{ i }}" name="position1" value="{{ i }}" style="display: none;">
+                    {% endfor %}
+                    <ul class="list-group scrollable-categories">
+                        {% for i in agency %}
+                        <li class="list-group-item"
+                            style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                            {{ i }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </form>
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+
+</body>
+
+</html>

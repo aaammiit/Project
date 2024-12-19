@@ -1,0 +1,136 @@
+body {
+    background-color: #f8f9fa;
+    /* Light background */
+}
+
+.header {
+    background-color: #343a40;
+    /* Dark header */
+    color: #fff;
+    padding: 20px 0;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.nav-link {
+    color: #fff !important;
+}
+
+.featured-card {
+    background-color: #ffffff;
+    /* White card */
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.category-title {
+    margin: 10px 0;
+}
+
+.news-title a {
+    text-decoration: none;
+
+}
+
+.news-title a:hover {
+    text-decoration: underline;
+    color: #007bff !important;
+}
+
+
+.footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Custom Styles */
+.navbar-nav .nav-link {
+    /* position: relative; */
+    transition: color 0.3s ease-in-out;
+    color: #de5313 !important;
+    font-weight: 600 !important;
+
+}
+
+.navbar-nav .nav-link:hover {
+    color: #0a0a07 !important;
+    background-color: #c1b9ac !important;
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    /* position: absolute; */
+    left: 0;
+    bottom: -5px;
+    width: 0;
+    height: 2px;
+    background-color: #f08c19;
+    transition: width 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1rem;
+    }
+}
+
+/* Set a fixed height and enable scrolling */
+.scrollable-categories {
+    max-height: 450px;
+    /* Adjust height as needed */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    padding-right: 15px;
+    /* Add some padding to avoid scrollbar overlap */
+}
+
+/* Add optional styles to make the scroll look smoother */
+.scrollable-categories::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-categories::-webkit-scrollbar-thumb {
+    background-color: #d3d3d3;
+    border-radius: 10px;
+}
+
+.scrollable-categories::-webkit-scrollbar-thumb:hover {
+    background-color: #a9a9a9;
+}
+
+.list-group-item:hover {
+    color: #c57a1a !important;
+    background-color: #c1b9ac !important;
+}
+
+.rem {
+    color: blue !important;
+    text-decoration: none;
+}
+
+.rem:hover {
+    color: red !important;
+    text-decoration: underline !important;
+}
+
+.h1s:hover {
+    color: #f08c19 !important;
+}

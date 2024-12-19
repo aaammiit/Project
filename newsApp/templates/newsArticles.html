@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Intelligence Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .navbar-nav .nav-link {
+            color: #de5313 !important;
+            font-weight: 600 !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #0a0a07 !important;
+            background-color: #c1b9ac !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            left: 0;
+            bottom: -5px;
+            width: 0;
+            height: 2px;
+            background-color: #f08c19;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .scrollable-categories {
+            max-height: 470px;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+
+        .scrollable-categories::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-categories::-webkit-scrollbar-thumb {
+            background-color: #d3d3d3;
+            border-radius: 10px;
+        }
+
+        .scrollable-categories::-webkit-scrollbar-thumb:hover {
+            background-color: #a9a9a9;
+        }
+
+        .list-group-item:hover {
+            color: #c57a1a !important;
+            background-color: #c1b9ac !important;
+        }
+
+        .rem {
+            color: blue !important;
+            text-decoration: none;
+        }
+
+        .rem:hover {
+            color: red !important;
+            text-decoration: underline !important;
+        }
+
+        .h1s:hover {
+            color: #f08c19 !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #f08c19 !important;
+            color: #fff !important;
+        }
+
+        .accordion-body {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .accordion-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .accordion-body::-webkit-scrollbar-thumb {
+            background-color: #b3b3b3;
+            border-radius: 10px;
+        }
+
+        .accordion-body::-webkit-scrollbar-thumb:hover {
+            background-color: #909090;
+        }
+
+        .accordion-item {
+            margin-bottom: 10px;
+        }
+
+        .full-article-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: none;
+            overflow-y: auto;
+            z-index: 1050;
+            padding: 20px;
+        }
+
+        .full-article-content {
+            background-color: #fff;
+            color: #000;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .close-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .scrollable-container {
+            height: 475px;
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            /* Optional: Add a border for visibility */
+        }
+
+        /* Custom scrollbar styles */
+        .scrollable-container::-webkit-scrollbar {
+            width: 10px;
+            /* Width of the scrollbar */
+        }
+
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            /* Background of the scrollbar track */
+            border-radius: 10px;
+            /* Rounded corners */
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #888;
+            /* Color of the scrollbar thumb */
+            border-radius: 10px;
+            /* Rounded corners */
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            /* Color of the thumb when hovered */
+        }
+
+        /* Style for the scrollbar in Webkit browsers (Chrome, Safari) */
+        #newsAccordion::-webkit-scrollbar {
+            height:700px;
+            width: 8px;
+            scroll-behavior: smooth;
+            /* Width of the scrollbar */
+        }
+
+        #newsAccordion::-webkit-scrollbar-thumb {
+            background-color: #888;
+            /* Color of the scrollbar thumb */
+            border-radius: 10px;
+            /* Rounded corners */
+        }
+
+        #newsAccordion::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            /* Background of the scrollbar track */
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header text-center sticky-top py-2"
+        style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+        <!-- Title and Badge -->
+        <div class="d-flex justify-content-evenly  align-items-center mb-1">
+            <a href="/homePage" style="text-decoration: none;">
+                <h1 class="me-3 badge bg-secondary fs-4 px-3 py-2 shadow-sm h1s"
+                    style="font-family: 'Roboto', sans-serif;">
+                    <i class="fas fa-newspaper" style="color: #f08c19;"></i> News Intelligence Tracker
+                </h1>
+            </a>
+            {%if keyword%}
+            <div>
+                <a href="/newsArticles" class="btn btn-outline-primary">Read Articles</a>
+            </div>
+
+            {%endif%}
+            {%if filterData%}
+            <div>
+                <!-- <a href="articles" class="btn btn-outline-primary mx-4">Read Articles</a> -->
+                <a href="sendFile" class="btn btn-success text-white mx-2" style="font-size: 1rem; font-weight: 500;">
+                    Send
+                </a>
+                <a href="deleteAll" class="btn btn-danger text-white" style="font-size: 1rem; font-weight: 500;">
+                    Clear
+                </a>
+            </div>
+            {%endif%}
+        </div>
+    </header>
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="accordion" id="newsAccordion" style="height: 510px; overflow-y: auto;">
+                    {% for i in article %}
+                    {%if i.isEdited%}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ i.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ i.id }}" aria-expanded="false"
+                            aria-controls="collapse{{ i.id }}">
+                           
+                                {{ i.news.newsTitle }} - <small class="badge bg-secondary text-light">
+                                    {{ i.news.newsDate }}</small>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ i.id }}" class="accordion-collapse collapse"
+                            aria-labelledby="heading{{ i.id }}" data-bs-parent="#newsAccordion">
+                            <div class="accordion-body">
+                                <textarea class="form-control mb-1" rows="4" readonly>{{ i.newsarticle }}</textarea>
+                                <div class="d-flex justify-content-center">
+                                    <a class="btn btn-outline-warning mx-2" style="width: 100px;" href="editText/{{i.id}}">Edit</a>
+                                    <a class="btn btn-outline-info" style="width: 100px;" href="gptSummary/{{i.id}}">GPT Run</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%else%}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ i.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ i.id }}" aria-expanded="false"
+                                aria-controls="collapse{{ i.id }}">
+                                {{ i.news.newsTitle }} - <small class="badge bg-secondary text-light">
+                                    {{ i.news.newsDate }}</small>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ i.id }}" class="accordion-collapse collapse"
+                            aria-labelledby="heading{{ i.id }}" data-bs-parent="#newsAccordion">
+                            <div class="accordion-body">
+                                <textarea class="form-control mb-1" rows="4" readonly>{{ i.newsarticle }}</textarea>
+                                <div class="d-flex justify-content-center">
+                                    <a class="btn btn-outline-warning mx-2" style="width: 100px;" href="editText/{{i.id}}">Edit</a>
+                                    <a class="btn btn-outline-info" style="width: 100px;" href="gptSummary/{{i.id}}">GPT Run</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%endif%}
+
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-4 position-sticky" style="top: 10px;">
+                <form id="autoSubmitAgencyForm" method="POST" action="/filter_agency">
+                    {% csrf_token %}
+                    {% for i in article %}
+                   
+                    <input type="radio" id="{{ i.news.title }}" name="position1" value="{{ i.news.title }}"
+                        style="display: none;">
+                    
+                    {% endfor %}
+                    <ul class="list-group scrollable-categories">
+                        {% for i in article %}
+                        {%if i.isEdited%}
+                        <li class="list-group-item" onclick="showFullArticle('{{ i.id }}')"
+                            style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                            
+                            {{ i.news.newsTitle }}
+                        </li>
+                        {%else%}
+                        <li class="list-group-item" onclick="showFullArticle('{{ i.id }}')"
+                            style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                            {{ i.news.newsTitle }}
+                        </li>
+                        {%endif%}
+                        {% endfor %}
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% for i in article %}
+    <div id="fullArticle{{ i.id }}" class="full-article-container">
+        <div class="full-article-content">
+            {{i.newsarticle|length}}
+            <div>
+                <button class="close-button" onclick="hideFullArticle('{{ i.id }}')">Close</button>
+                <h2>{{ i.news.newsTitle }} - <small class="text-muted">{{ i.news.newsDate }}</small></h2>
+            </div>
+            <div class="scrollable-container">
+                <p>{{ i.newsarticle }}</p>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showFullArticle(articleId) {
+            document.getElementById('fullArticle' + articleId).style.display = 'block';
+
+        }
+
+        function hideFullArticle(articleId) {
+            document.getElementById('fullArticle' + articleId).style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
